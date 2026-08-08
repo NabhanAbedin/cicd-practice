@@ -26,7 +26,7 @@ jobs:
     defaults:
       run:
         working-directory: backend
-        
+
     steps:
       - uses: actions/checkout@v4
 
@@ -45,3 +45,26 @@ jobs:
         run: dotnet test --no-build --verbosity normal
         env:
           ConnectionStrings__Default: "Host=localhost;Port=5432;Database=testdb;Username=postgres;Password=test"
+  
+  build-and-push:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: |
+           nabhanabedin/cicd-practice-api:${{ github.sha }}
+            nabhanabedin/cicd-practice-api:latest
