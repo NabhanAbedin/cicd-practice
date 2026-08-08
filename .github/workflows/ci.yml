@@ -22,6 +22,11 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    
+    defaults:
+      run:
+        working-directory: backend
+        
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +36,7 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore 
 
       - name: Build
         run: dotnet build --no-restore
